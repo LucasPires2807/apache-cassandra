@@ -20,7 +20,7 @@ class InsertData(Cassandra):
 
         for values in batch_values:
             # Create individual insert query for each set of values
-            insert_query = f"""INSERT INTO {table} ({table}_id, {', '.join(columns)}, created_at, updated_at)
+            insert_query = f"""INSERT INTO {self.table} ({self.table}_id, {', '.join(columns)}, created_at, updated_at)
                 VALUES (uuid(), {', '.join(values)}, toTimestamp(now()), toTimestamp(now()));"""
             batch_query += insert_query + "\n"
 
