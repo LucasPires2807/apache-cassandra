@@ -16,23 +16,20 @@ class InsertData(Cassandra):
         self.execute_query(query)
 
     def insert_batch_data(self, columns: Union[list, tuple], batch_values: List[Union[list, tuple]]):
-        # Start the batch statement
-        batch_query = "BEGIN BATCH\n"
+        batch_queries = []
 
         for values in batch_values:
-            # Convert all values to string for SQL insertion
             string_values = [f"'{value}'" if isinstance(value, str) else str(value) for value in values]
-            
-            # Create individual insert query for each set of values
             insert_query = f"""INSERT INTO {self.keyspace}.{self.table} ({self.table.rstrip('s')}_id, {', '.join(columns)}, created_at, updated_at)
                 VALUES (uuid(), {', '.join(string_values)}, toTimestamp(now()), toTimestamp(now()));"""
-            batch_query += insert_query + "\n"
+            batch_queries.append(insert_query)
 
-        # End the batch statement
-        batch_query += "APPLY BATCH;"
+        # Join all individual insert queries into one batch statement
+        batch_query = "BEGIN BATCH\n" + "\n".join(batch_queries) + "\nAPPLY BATCH;"
 
         # Execute the batch query
         self.execute_query(batch_query)
+
 
     def __del__(self):
         super().__del__()
