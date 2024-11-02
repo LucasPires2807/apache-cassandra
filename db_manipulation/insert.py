@@ -9,8 +9,9 @@ class InsertData(Cassandra):
         self.table = table
 
     def insert_one_data(self, columns: Union[list, tuple], values: Union[list, tuple]):
-        query = f"""INSERT INTO {self.table} ({self.table.rstrip('s')}_id, {', '.join(columns)}, created_at, updated_at)
-            VALUES (uuid(), {', '.join(values)}, toTimestamp(now()), toTimestamp(now()))
+        string_values = [f"'{value}'" if isinstance(value, str) else str(value) for value in values]
+        query = f"""INSERT INTO {self.keyspace}.{self.table} ({self.table.rstrip('s')}_id, {', '.join(columns)}, created_at, updated_at)
+            VALUES (uuid(), {', '.join(string_values)}, toTimestamp(now()), toTimestamp(now()))
         """
         self.execute_query(query)
 
