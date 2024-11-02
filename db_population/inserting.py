@@ -21,3 +21,8 @@ batch_values = [
 
 insert_data.insert_batch_data(columns, batch_values)
 
+values = [
+    'Product Z', 'Description of Product Z', 19.99, 10, 'Category 5'
+]
+
+insert_data.insert_one_data(columns, values)
