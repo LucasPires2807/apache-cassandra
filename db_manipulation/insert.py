@@ -32,3 +32,6 @@ class InsertData(Cassandra):
 
         # Execute the batch query
         self.execute_query(batch_query)
+
+    def __del__(self):
+        super().__del__()
